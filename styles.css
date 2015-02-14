@@ -21,10 +21,10 @@ Feel free to use it if you like. */
 }
 
 .asteroid {
-  position: absolute;
-  transition: 1s;
+
 }
 
 .player {
   position: absolute;
+  cursor: pointer;
 }

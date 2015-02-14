@@ -11,8 +11,14 @@
         <div class="current">Current score: <span>0</span></div>
         <div class="collisions">Collisions: <span>0</span></div>
       </div>
-      <div class="game">
-
+      <div class="gamecontainer">
+        <svg class="game">
+          <defs>
+            <pattern id="image" x="0" y="0" patternUnits="userSpaceOnUse" height="200" width="200">
+              <image x="0" y="0" height="200" width="200" xlink:href="assets/asteroid.png"></image>
+            </pattern>
+          </defs>
+        </svg>
       </div>
     </div>
     <script src="d3.js" charset="utf-8"></script>

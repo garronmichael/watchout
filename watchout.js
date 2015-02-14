@@ -1,15 +1,23 @@
 // start slingin' some d3 here.
+
+/*
+ * GAME SETTINGS
+ */
+var gameSize = 1000;
+var asteroidRadius = 22;
+
+
 var asteroids = [];
+
 
 var Asteroid = function(id, x, y) {
   this.id = id;
   this.x = x;
   this.y = y;
 };
-var asteroidRadius = 22;
 
 var randomize = function() {
-  return Math.random()*100;
+  return Math.random()*gameSize;
 };
 for(var i = 0; i < 25; i++) {
   var zoom = d3.behavior.zoom();
@@ -19,29 +27,25 @@ for(var i = 0; i < 25; i++) {
   asteroids.push(asteroid);
 }
 
-var updateAsteroids = function(){
-  d3.select('.game').selectAll('svg.asteroid')
-    .data(asteroids)
-    .style({'top': function(d) { return d.y + '%' },
-            'left': function(d) {return d.x + '%' }
-          })
-    .enter()
-      .append('svg')
-        .style({
-          'top': function(d) { return d.y + '%'; },
-          'left': function(d) { return d.x + '%'; }
-        })
-        .classed('asteroid', true)
-        .attr({
-          'width': 50,
-          'height': 50,
-        })
-        .append('image')
-          .attr({
-            'xlink:href': 'assets/asteroid.png',
-            'width': 25,
-            'height': 25
-          })
+var enemyUpdate = function(asteroidData) {
+
+  var gameAsteroids = d3.select('.game').selectAll('circle.asteroid').data(asteroidData);
+
+  gameAsteroids.enter()
+  .append('circle')
+    .attr({
+      'cy': function(d) { return d.y; },
+      'cx': function(d) { return d.x; },
+      'r':  22,
+      'fill': "url(#image)"
+    })
+    .classed('asteroid', true);
+
+  gameAsteroids.transition().duration(500).attr({
+    'cy': function(d) { return d.y; },
+    'cx': function(d) {return d.x; }
+    })
+
 };
 
 var move = function() {
@@ -52,63 +56,52 @@ var move = function() {
 };
 
 var initializeEnemies = function() {
-  updateAsteroids();
+  enemyUpdate(asteroids);
   move();
   setTimeout(function() { initializeEnemies(); }, 1000);
 };
 
-initializeEnemies();
 
 var player = [{
-  x: 0,
-  y: 0
+  x: .5 * gameSize,
+  y: .5 * gameSize
 }];
 
-var updatePlayer = function(){
-  d3.select('.game').selectAll('.player')
-  .data(player)
-  .style({
-    'top': function(d) { return d.y + 'px' },
-    'left': function(d) {return d.x + 'px' }
-  })
-  .enter()
-    .append('svg')
-      .style({
-        'top': function(d) { return d.y + 'px'; },
-        'left': function(d) { return d.x + 'px'; }
-      })
-      .classed('player', true)
+var playerUpdate = function(playerData){
+  var player = d3.select('.game')
+    .selectAll('.player')
+    .data(playerData);
+
+
+  player.attr({
+    'cy': function(d) { return d.y; },
+    'cx': function(d) { return d.x; }
+  });
+
+  player.enter()
+    .append('circle')
       .attr({
-        'width': 50,
-        'height': 50,
+        'cy': function(d) { return d.y; },
+        'cx': function(d) { return d.x; },
+        'r': 25,
+        'fill': 'blue'
       })
-      .append('circle')
-        .attr({
-          'r': 25,
-          'cx': 25,
-          'cy': 25,
-          'fill': 'blue'
-        }).call(drag);
+      .classed('player', true).call(drag);
 };
 
 var initializeGame = function() {
   initializeEnemies();
-  updatePlayer();
+  playerUpdate(player);
 };
 
 var drag = d3.behavior.drag();
 
 drag.on('drag', function(d) {
   d3.select('.player')
-  .style({
-    'top': function(d) {
-      return d3.event.y;
-    },
-    'left': function(d) {
-      return d3.event.x;
-    }
+  .attr({
+    'cy': function(d) { return d3.event.y; },
+    'cx': function(d) { return d3.event.x; }
   })
-  return this;
 });
 
 
