@@ -36,7 +36,7 @@ var enemyUpdate = function(asteroidData) {
     .attr({
       'cy': function(d) { return d.y; },
       'cx': function(d) { return d.x; },
-      'r':  22,
+      'r':  asteroidRadius,
       'fill': "url(#image)"
     })
     .classed('asteroid', true);
@@ -82,7 +82,7 @@ var playerUpdate = function(playerData){
       .attr({
         'cy': function(d) { return d.y; },
         'cx': function(d) { return d.x; },
-        'r': 25,
+        'r': asteroidRadius,
         'fill': 'blue'
       })
       .classed('player', true).call(drag);
@@ -99,10 +99,27 @@ var drag = d3.behavior.drag();
 drag.on('drag', function(d) {
   d3.select('.player')
   .attr({
-    'cy': function(d) { return d3.event.y; },
-    'cx': function(d) { return d3.event.x; }
+    'cy': function(d) {
+      player[0].y = d3.event.y;
+      return player[0].y;
+    },
+    'cx': function(d) {
+      player[0].x = d3.event.x;
+      return player[0].x;
+    }
   })
 });
 
+var checkCollisions = function() {
+  var deltaX, deltaY;
+  for(var i = 0; i < asteroids.length; i++) {
+    deltaX = Math.abs(asteroids[i].x - player[0].x);
+    deltaY = Math.abs(asteroids[i].y - player[0].y);
+    if(deltaX < asteroidRadius && deltaY < asteroidRadius) {
+      return true;
+    }
+  }
+  return false;
+};
 
 initializeGame();
