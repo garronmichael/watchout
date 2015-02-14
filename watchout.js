@@ -72,7 +72,6 @@ var playerUpdate = function(playerData){
     .selectAll('.player')
     .data(playerData);
 
-
   player.attr({
     'cy': function(d) { return d.y; },
     'cx': function(d) { return d.x; }
@@ -87,6 +86,7 @@ var playerUpdate = function(playerData){
         'fill': 'blue'
       })
       .classed('player', true).call(drag);
+
 };
 
 var initializeGame = function() {
