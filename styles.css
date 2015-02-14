@@ -24,3 +24,8 @@ Feel free to use it if you like. */
   position: absolute;
   transition: 1s;
 }
+
+.player {
+  position: absolute;
+
+}

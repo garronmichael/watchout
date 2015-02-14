@@ -1,5 +1,4 @@
 // start slingin' some d3 here.
-
 var asteroids = [];
 
 var Asteroid = function(id, x, y) {
@@ -27,22 +26,22 @@ var updateAsteroids = function(){
             'left': function(d) {return d.x + '%' }
           })
     .enter()
-    .append('svg')
-      .style({
-        'top': function(d) { return d.y + '%'; },
-        'left': function(d) { return d.x + '%'; }
-      })
-      .classed('asteroid', true)
-      .attr({
-        'width': 50,
-        'height': 50,
-      })
-      .append('image')
-        .attr({
-          'xlink:href': 'assets/asteroid.png',
-          'width': 25,
-          'height': 25
+      .append('svg')
+        .style({
+          'top': function(d) { return d.y + '%'; },
+          'left': function(d) { return d.x + '%'; }
         })
+        .classed('asteroid', true)
+        .attr({
+          'width': 50,
+          'height': 50,
+        })
+        .append('image')
+          .attr({
+            'xlink:href': 'assets/asteroid.png',
+            'width': 25,
+            'height': 25
+          })
 };
 
 var move = function() {
@@ -52,11 +51,42 @@ var move = function() {
   }
 };
 
-var initialize = function() {
+var initializeEnemies = function() {
   updateAsteroids();
   move();
-  setTimeout(function() { initialize(); }, 1000);
+  setTimeout(function() { initializeEnemies(); }, 1000);
 };
 
-initialize();
+initializeEnemies();
+
+var player = [{
+  x: 50,
+  y: 50
+}];
+
+d3.select('.game').selectAll('.player')
+  .data(player)
+  .style({
+    'top': function(d) { return d.y + '%' },
+    'left': function(d) {return d.x + '%' }
+  })
+  .enter()
+    .append('svg')
+      .style({
+        'top': function(d) { return d.y + '%'; },
+        'left': function(d) { return d.x + '%'; }
+      })
+      .classed('player', true)
+      .attr({
+        'width': 50,
+        'height': 50,
+      })
+      .append('circle')
+        .attr({
+          'r': 25,
+          'cx': 25,
+          'cy': 25,
+          'fill': 'blue'
+        });
+
 
