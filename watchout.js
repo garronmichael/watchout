@@ -7,11 +7,10 @@ var Asteroid = function(id, x, y) {
   this.x = x;
   this.y = y;
 };
-var gameSize = 1000;
 var asteroidRadius = 22;
 
 var randomize = function() {
-  return Math.floor(Math.max(Math.random() * gameSize - asteroidRadius, 0));
+  return Math.random()*100;
 };
 for(var i = 0; i < 25; i++) {
   var zoom = d3.behavior.zoom();
@@ -24,26 +23,26 @@ for(var i = 0; i < 25; i++) {
 var updateAsteroids = function(){
   d3.select('.game').selectAll('svg.asteroid')
     .data(asteroids)
-    .style({'top': function(d) { return d.y + 'px' },
-            'left': function(d) {return d.x + 'px' }
+    .style({'top': function(d) { return d.y + '%' },
+            'left': function(d) {return d.x + '%' }
           })
     .enter()
     .append('svg')
-      .style({'top': function(d) { return d.y + 'px'; },
-              'left': function(d) { return d.x + 'px'; }
-              })
+      .style({
+        'top': function(d) { return d.y + '%'; },
+        'left': function(d) { return d.x + '%'; }
+      })
       .classed('asteroid', true)
-      .attr('width', 50)
-      .attr('height', 50)
-      .append('circle')
       .attr({
-              'cx': '25',
-              'cy': '25',
-              'r': asteroidRadius,
-              'fill': 'green',
-              'stroke': 'purple',
-              'stroke-width': '1'
-            });
+        'width': 50,
+        'height': 50,
+      })
+      .append('image')
+        .attr({
+          'xlink:href': 'assets/asteroid.png',
+          'width': 25,
+          'height': 25
+        })
 };
 
 var move = function() {

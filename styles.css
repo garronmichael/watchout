@@ -14,6 +14,10 @@ Feel free to use it if you like. */
   width: 1000px;
   height: 1000px;
   border: 1px solid black;
+  background-image: url('assets/bg.jpg');
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
 }
 
 .asteroid {
