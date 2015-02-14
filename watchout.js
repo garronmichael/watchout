@@ -60,21 +60,22 @@ var initializeEnemies = function() {
 initializeEnemies();
 
 var player = [{
-  x: 50,
-  y: 50
+  x: 0,
+  y: 0
 }];
 
-d3.select('.game').selectAll('.player')
+var updatePlayer = function(){
+  d3.select('.game').selectAll('.player')
   .data(player)
   .style({
-    'top': function(d) { return d.y + '%' },
-    'left': function(d) {return d.x + '%' }
+    'top': function(d) { return d.y + 'px' },
+    'left': function(d) {return d.x + 'px' }
   })
   .enter()
     .append('svg')
       .style({
-        'top': function(d) { return d.y + '%'; },
-        'left': function(d) { return d.x + '%'; }
+        'top': function(d) { return d.y + 'px'; },
+        'left': function(d) { return d.x + 'px'; }
       })
       .classed('player', true)
       .attr({
@@ -87,6 +88,28 @@ d3.select('.game').selectAll('.player')
           'cx': 25,
           'cy': 25,
           'fill': 'blue'
-        });
+        }).call(drag);
+};
+
+var initializeGame = function() {
+  initializeEnemies();
+  updatePlayer();
+};
+
+var drag = d3.behavior.drag();
+
+drag.on('drag', function(d) {
+  d3.select('.player')
+  .style({
+    'top': function(d) {
+      return d3.event.y;
+    },
+    'left': function(d) {
+      return d3.event.x;
+    }
+  })
+  return this;
+});
 
 
+initializeGame();
