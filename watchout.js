@@ -53,3 +53,11 @@ var move = function() {
   }
 };
 
+var initialize = function() {
+  updateAsteroids();
+  move();
+  setTimeout(function() { initialize(); }, 1000);
+};
+
+initialize();
+
