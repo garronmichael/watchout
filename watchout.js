@@ -19,6 +19,7 @@ var Asteroid = function(id, x, y) {
 var randomize = function() {
   return Math.random()*gameSize;
 };
+
 for(var i = 0; i < 25; i++) {
   var zoom = d3.behavior.zoom();
   var x = randomize();
@@ -27,24 +28,29 @@ for(var i = 0; i < 25; i++) {
   asteroids.push(asteroid);
 }
 
-var enemyUpdate = function(asteroidData) {
+var gameAsteroids = d3.select('.game').selectAll('circle.asteroid').data(asteroids, function(d) { return d.id; });
 
-  var gameAsteroids = d3.select('.game').selectAll('circle.asteroid').data(asteroidData);
+gameAsteroids.enter()
+.append('circle')
+  .attr({
+    'cy': function(d) { return d.y; },
+    'cx': function(d) { return d.x; },
+    'r':  asteroidRadius,
+    'fill': "url(#image)"
+  })
+  .classed('asteroid', true);
 
-  gameAsteroids.enter()
-  .append('circle')
-    .attr({
-      'cy': function(d) { return d.y; },
-      'cx': function(d) { return d.x; },
-      'r':  asteroidRadius,
-      'fill': "url(#image)"
-    })
-    .classed('asteroid', true);
+var enemyUpdate = function() {
+  // debugger;
 
-  gameAsteroids.transition().duration(500).attr({
+  gameAsteroids.transition().duration(800).attr({
     'cy': function(d) { return d.y; },
     'cx': function(d) {return d.x; }
-    })
+    }).each('end', function(){
+      move();
+      console.log(asteroids.length)
+      enemyUpdate(asteroids);
+    });
 
 };
 
@@ -53,12 +59,6 @@ var move = function() {
     asteroids[i].x = randomize();
     asteroids[i].y = randomize();
   }
-};
-
-var initializeEnemies = function() {
-  enemyUpdate(asteroids);
-  move();
-  setTimeout(function() { initializeEnemies(); }, 1000);
 };
 
 
@@ -90,7 +90,7 @@ var playerUpdate = function(playerData){
 };
 
 var initializeGame = function() {
-  initializeEnemies();
+  enemyUpdate();
   playerUpdate(player);
 };
 
@@ -110,16 +110,50 @@ drag.on('drag', function(d) {
   })
 });
 
-var checkCollisions = function() {
-  var deltaX, deltaY;
-  for(var i = 0; i < asteroids.length; i++) {
-    deltaX = Math.abs(asteroids[i].x - player[0].x);
-    deltaY = Math.abs(asteroids[i].y - player[0].y);
+var previousCollision = null;
+
+var checkCollisions = function(asteroid) {
+  if ( asteroid !== undefined ) {
+    var deltaX = Math.abs( ( asteroid.attr('cx') ) - player[0].x);
+    var deltaY = Math.abs( ( asteroid.attr('cy') ) - player[0].y);
     if(deltaX < asteroidRadius && deltaY < asteroidRadius) {
-      return true;
+      if ( previousCollision != asteroid.data()[0].id) {
+        previousCollision = asteroid.data()[0].id;
+        scores[2]++;
+        return true;
+      }
     }
+    return false;
   }
-  return false;
 };
+
+var collisionCounter = function() {
+  gameAsteroids.each(function(){
+    if ( checkCollisions(d3.select(this)) ) {
+      scores[2]++;
+      scores[1] = 0;
+      d3.select('.player').attr('fill', 'red');
+    } else {
+      d3.select('.player').attr('fill', 'blue');
+    }
+  });
+}
+
+var scores = [0,0,0];
+var scoreBoard = d3.select('.scoreboard');
+var scoreNumbers = scoreBoard.selectAll('.amount').data(scores);
+
+setInterval(function() {
+  scores[1]++;
+  if(scores[1] > scores[0]) {
+    scores[0] = scores[1];
+  }
+  scoreNumbers.data(scores).text(function(d) {
+    return d;
+  })
+}, 50);
+
+d3.timer(collisionCounter);
+
 
 initializeGame();
